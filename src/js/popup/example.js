@@ -1,3 +1,16 @@
-export default function () {
-  alert("hello! (find me on src/js/popup/example.js)");
+function handleFileSelect(evt) {
+  var files = evt.target.files; // FileList object.
+
+  // files is a FileList of File objects. List some properties.
+  var output = [];
+  for (var i = 0, f; f = files[i]; i++) {
+    output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                f.size, ' bytes, last modified: ',
+                f.lastModifiedDate.toLocaleDateString(), '</li>');
+    console.log(f);
+  }
+  document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+}
+export default () => {
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
 };

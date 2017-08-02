@@ -10,18 +10,26 @@ function ready(callback) {
 }
 
 function insertAvatarButton() {
+  let urls = [
+    'https://user-images.githubusercontent.com/92595/28860626-4f5100f2-7798-11e7-83a0-f3d6fd32a007.png',
+    'https://user-images.githubusercontent.com/92595/28860628-511d6a42-7798-11e7-8dd2-131b4c8f6832.png',
+    // 'https://avatars3.githubusercontent.com/u/92595?v=4&s=460'
+  ]
   let navigation = document.querySelector('.globalHeader__navigation');
-  let div = document.createElement('div');
-  div.setAttribute('role', 'button');
-  let img = document.createElement('img');
-  let url = 'https://avatars3.githubusercontent.com/u/92595?v=4&s=460';
-  img.setAttribute('id', 'hoge');
-  img.setAttribute('width', 24);
-  img.setAttribute('height', 24);
-  // img.setAttribute('src', url);
-  img.addEventListener('click', () => changeAvatar(url));
-  div.appendChild(img);
-  navigation.prepend(div);
+
+  for (var i = 0; urls[i]; i++) {
+    let url = urls[i];
+    let div = document.createElement('div');
+    div.setAttribute('role', 'button');
+    let img = document.createElement('img');
+    img.setAttribute('width', 24);
+    img.setAttribute('height', 24);
+    img.setAttribute('src', url);
+    img.setAttribute('style', "margin-left: 1px");
+    img.addEventListener('click', () => changeAvatar(url));
+    div.appendChild(img);
+    navigation.prepend(div);
+  }
 }
 
 function getImage(url, callback) {
@@ -29,7 +37,7 @@ function getImage(url, callback) {
   req.open("GET", url, true);
   req.responseType = "blob";
 
-  req.onload = (e) => {
+  req.onload = () => {
     callback(req.response);
   };
   req.send();
@@ -44,7 +52,6 @@ function changeAvatar(url) {
     request.open("POST", createRequestURL(getParams()));
     request.onload = (e) => {
       console.log(e);
-      console.log(request);
     }
     request.send(formData);
   })
