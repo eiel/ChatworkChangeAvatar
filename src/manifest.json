@@ -1,5 +1,11 @@
 {
   "name": "ChatWork Change Avatar",
+  "content_scripts": [
+    {
+      "matches": ["https://www.chatwork.com/"],
+      "js": ["content.bundle.js"]
+    }
+  ],
   "options_page": "options.html",
   "background": {
     "page": "background.html"
@@ -12,5 +18,8 @@
     "128": "icon-128.png"
   },
   "manifest_version": 2,
+  "permissions": [
+    "https://*/*"
+  ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

@@ -18,6 +18,7 @@ if (fileSystem.existsSync(secretsPath)) {
 
 var options = {
   entry: {
+    content: path.join(__dirname, "src", "js", "content.js"),
     popup: path.join(__dirname, "src", "js", "popup.js"),
     options: path.join(__dirname, "src", "js", "options.js"),
     background: path.join(__dirname, "src", "js", "background.js")
@@ -28,6 +29,21 @@ var options = {
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                'env',
+                {'targets': 'chrome'}
+              ]
+            ]
+          }
+        }
+      },
       {
         test: /\.css$/,
         loader: "style-loader!css-loader",
