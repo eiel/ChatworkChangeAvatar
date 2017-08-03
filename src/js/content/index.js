@@ -1,60 +1,63 @@
-function ready(callback) {
+// @flow
+
+// DOMContentLoaded時またはDOMContentLoadedが完了されている場合に引数でわたされた関数を実行する
+function ready() {
   if (document.readyState === "complete"
     || document.readyState === "loaded"
     || document.readyState === "interactive") {
      // document has at least been parsed
-    callback();
+     return Promise.resolve();
   } else {
-    document.addEventListener("DOMContentLoaded", callback);
+     return new Promise((resolve) =>
+       document.addEventListener("DOMContentLoaded", resolve)
+     );
   }
 }
 
-function insertAvatarButton() {
-  let urls = [
-    'https://user-images.githubusercontent.com/92595/28860626-4f5100f2-7798-11e7-83a0-f3d6fd32a007.png',
-    'https://user-images.githubusercontent.com/92595/28860628-511d6a42-7798-11e7-8dd2-131b4c8f6832.png',
-    // 'https://avatars3.githubusercontent.com/u/92595?v=4&s=460'
-  ]
+function insertAvatarButtons(urls) {
   let navigation = document.querySelector('.globalHeader__navigation');
-
   for (var i = 0; urls[i]; i++) {
     let url = urls[i];
-    let div = document.createElement('div');
-    div.setAttribute('role', 'button');
-    let img = document.createElement('img');
-    img.setAttribute('width', 24);
-    img.setAttribute('height', 24);
-    img.setAttribute('src', url);
-    img.setAttribute('style', "margin-left: 1px");
-    img.addEventListener('click', () => changeAvatar(url));
-    div.appendChild(img);
-    navigation.prepend(div);
+    let element = avatarButton(url);
+    navigation.prepend(element);
   }
 }
 
-function getImage(url, callback) {
+function avatarButton(url) {
+  let div = document.createElement('div');
+  div.setAttribute('role', 'button');
+  let img = document.createElement('img');
+  img.setAttribute('width', 24);
+  img.setAttribute('height', 24);
+  img.setAttribute('src', url);
+  img.setAttribute('style', "margin-left: 1px");
+  img.addEventListener('click', () => getImage(url).then(changeAvatar));
+  div.appendChild(img);
+  return div;
+}
+
+function getImage(url) {
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.responseType = "blob";
 
-  req.onload = () => {
-    callback(req.response);
-  };
+  let promise = new Promise((resolve) => {
+    req.addEventListener('load', () => resolve(req.response));
+  });
   req.send();
+  return promise;
 }
 
-function changeAvatar(url) {
-  getImage(url, (blob) => {
-    let formData = new FormData();
-    formData.append("avatar_upload_file", blob);
+function changeAvatar(blob) {
+  let request = new XMLHttpRequest();
+  request.open("POST", createRequestURL(getParams()));
 
-    let request = new XMLHttpRequest();
-    request.open("POST", createRequestURL(getParams()));
-    request.onload = (e) => {
-      console.log(e);
-    }
-    request.send(formData);
-  })
+  request.addEventListener('load', (e) => {
+    console.log(e);
+  });
+  let formData = new FormData();
+  formData.append("avatar_upload_file", blob);
+  request.send(formData);
 }
 
 const value_id = 'chatwork-change-avatar-value' ;
@@ -84,9 +87,13 @@ function createRequestURL({ACCESS_TOKEN, MYID, CLIENT_VER}) {
   return `/gateway.php?cmd=edit_profile_avatar_image&_f=1&myid=${MYID}&_v=${CLIENT_VER}&_t=${ACCESS_TOKEN}`
 }
 
-export default () => {
-  ready(() => {
-    insertParams();
-    insertAvatarButton();
-  });
+function setup() {
+  insertParams();
+  let urls = [
+    'https://user-images.githubusercontent.com/92595/28902621-24cc177e-783b-11e7-918a-e50bfb65e57b.png',
+    'https://avatars3.githubusercontent.com/u/92595?v=4&s=460',
+  ];
+  insertAvatarButtons(urls);
 }
+
+export default () => ready().then(setup);
