@@ -53,14 +53,6 @@ function createUrlList() {
   return self;
 }
 
-function setUrlList() {
-  const defaults= {url_list: [
-    'https://user-images.githubusercontent.com/92595/28902621-24cc177e-783b-11e7-918a-e50bfb65e57b.png',
-    'https://avatars3.githubusercontent.com/u/92595?v=4&s=460',
-  ]};
-  chrome.storage.sync.set(defaults);
-}
-
 function render(url_list) {
   url_list.get().then((urls) => {
     let output = [];
