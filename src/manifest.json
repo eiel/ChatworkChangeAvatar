@@ -1,5 +1,5 @@
 {
-  "name": "ChatWork Change Avatar",
+  "name": "Avatar switcher for ChatWork",
   "content_scripts": [
     {
       "matches": ["https://www.chatwork.com/","https://kcw.kddi.ne.jp"],
