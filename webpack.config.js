@@ -1,9 +1,10 @@
 var webpack = require("webpack"),
     path = require("path"),
     fileSystem = require("fs"),
-    env = require("./utils/env"),
+    WebpackNotifierPlugin = require('webpack-notifier'),
     HtmlWebpackPlugin = require("html-webpack-plugin"),
-    WriteFilePlugin = require("write-file-webpack-plugin");
+    WriteFilePlugin = require("write-file-webpack-plugin"),
+    env = require("./utils/env");
 
 // load the secrets
 var alias = {};
@@ -65,6 +66,7 @@ var options = {
     alias: alias
   },
   plugins: [
+    new WebpackNotifierPlugin(),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(env.NODE_ENV)
