@@ -16,6 +16,9 @@ function ready() {
 
 function insertAvatarButtons(urls) {
   let navigation = document.querySelector('.globalHeader__navigation');
+  if (navigation === null) {
+    return
+  }
   for (var i = 0; urls[i]; i++) {
     let url = urls[i];
     let element = avatarButton(url);
@@ -27,8 +30,8 @@ function avatarButton(url) {
   let div = document.createElement('div');
   div.setAttribute('role', 'button');
   let img = document.createElement('img');
-  img.setAttribute('width', 24);
-  img.setAttribute('height', 24);
+  img.setAttribute('width', '24');
+  img.setAttribute('height', '24');
   img.setAttribute('src', url);
   img.setAttribute('style', "margin-left: 1px");
   img.addEventListener('click', () => getImage(url).then(changeAvatar));
@@ -36,25 +39,29 @@ function avatarButton(url) {
   return div;
 }
 
-function getImage(url) {
+function getImage(url): Promise<Blob> {
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.responseType = "blob";
 
-  let promise = new Promise((resolve) => {
-    req.addEventListener('load', () => resolve(req.response));
+  let promise = new Promise((resolve, reject) => {
+    req.onload = () => {
+      resolve(req.response);
+    };
   });
   req.send();
   return promise;
 }
 
-function changeAvatar(blob) {
+function changeAvatar(blob: Blob) {
   let request = new XMLHttpRequest();
-  request.open("POST", createRequestURL(getParams()));
+  let params = getParams();
+  if (params === null) {
+    // TODO: error get access_token
+    return;
+  }
+  request.open("POST", createRequestURL(params));
 
-  request.addEventListener('load', (e) => {
-    console.log(e);
-  });
   let formData = new FormData();
   formData.append("avatar_upload_file", blob);
   request.send(formData);
@@ -74,12 +81,17 @@ function insertParams() {
     })();
     `
   script.textContent = code;
+  if (document.body === null) {
+    return;
+  }
   document.body.appendChild(script);
 }
 
-function getParams() {
+function getParams(): {ACCESS_TOKEN: string, MYID: string, CLIENT_VER: string} | null {
   const div = document.querySelector('#' + value_id);
+  if (div === null) { return null; }
   const string = div.dataset['value'];
+  if (string == null) { return null; }
   return JSON.parse(string);
 }
 

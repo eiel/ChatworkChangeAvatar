@@ -37,6 +37,7 @@ var options = {
           loader: 'babel-loader',
           options: {
             presets: [
+              'flow',
               [
                 'env',
                 {'targets': 'chrome'}
