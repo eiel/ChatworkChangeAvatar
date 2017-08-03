@@ -99,13 +99,34 @@ function createRequestURL({ACCESS_TOKEN, MYID, CLIENT_VER}) {
   return `/gateway.php?cmd=edit_profile_avatar_image&_f=1&myid=${MYID}&_v=${CLIENT_VER}&_t=${ACCESS_TOKEN}`
 }
 
+declare type Items = {url_list: Array<string>};
+declare class ChromeStorage {
+  sync: ChromeStorageSync;
+}
+declare type Hoge<T> = (items: T) => mixed
+declare class ChromeStorageSync {
+  get<T>(defaults: T, callback: Hoge<T>): mixed;
+}
+declare class Chrome {
+  storage: ChromeStorage;
+}
+
+declare var chrome: Chrome;
+
+function getUrlList(): Promise<Array<string>> {
+  const defaults: Items = {url_list: []};
+
+  return new Promise((resolve) => {
+    chrome.storage.sync.get(defaults, (items: Items) => {
+      resolve(items.url_list);
+    });
+  });
+}
+
 function setup() {
   insertParams();
-  let urls = [
-    'https://user-images.githubusercontent.com/92595/28902621-24cc177e-783b-11e7-918a-e50bfb65e57b.png',
-    'https://avatars3.githubusercontent.com/u/92595?v=4&s=460',
-  ];
-  insertAvatarButtons(urls);
+  getUrlList()
+    .then(insertAvatarButtons);
 }
 
 export default () => ready().then(setup);
