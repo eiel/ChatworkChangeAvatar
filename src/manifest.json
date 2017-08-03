@@ -2,7 +2,7 @@
   "name": "ChatWork Change Avatar",
   "content_scripts": [
     {
-      "matches": ["https://www.chatwork.com/"],
+      "matches": ["https://www.chatwork.com/","https://kcw.kddi.ne.jp"],
       "js": ["content.bundle.js"]
     }
   ],
