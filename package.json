@@ -1,6 +1,6 @@
 {
   "name": "ChatWorkChangeAvatar",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "rapid change the avatar for ChatWork",
   "scripts": {
     "build": "node utils/build.js",
